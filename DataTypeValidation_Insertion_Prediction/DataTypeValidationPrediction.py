@@ -11,7 +11,7 @@ class dBOperation:
     """
           This class shall be used for handling all the SQL operations.
 
-          Written By: iNeuron Intelligence
+          Written By: Suryajith Nair
           Version: 1.0
           Revisions: None
 
@@ -39,7 +39,7 @@ class dBOperation:
                                        Output: None
                                        On Failure: Raise Exception
 
-                                        Written By: iNeuron Intelligence
+                                        Written By: Suryajith Nair
                                        Version: 1.0
                                        Revisions: None
 

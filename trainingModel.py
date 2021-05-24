@@ -98,10 +98,8 @@ class trainModel:
 
             # logging the successful Training
             self.log_writer.log(self.database,self.name, 'Successful End of Training')
-            #self.file_object.close()
 
         except Exception as e:
             # logging the unsuccessful Training
             self.log_writer.log(self.database,self.name, 'Unsuccessful End of Training:'% e)
-            #self.file_object.close()
             raise e

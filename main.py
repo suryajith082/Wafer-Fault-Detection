@@ -25,40 +25,40 @@ CORS(app)
 def home():
     return render_template('index.html')
 
+@app.route("/traininpage", methods=['GET'])
+@cross_origin()
+def trainingpage():
+    return render_template('training.html')
+
+@app.route("/contactpage", methods=['GET'])
+@cross_origin()
+def contactpage():
+    return render_template('contactpage.html')
+
 @app.route("/predict", methods=['POST'])
 @cross_origin()
 def predictRouteClient():
     try:
-            if request.json is not None:
-                path = request.json['filepath']
 
-                pred_val = pred_validation(path) #object initialization
+        if request.json is not None:
+            path = request.json['filepath']
+            sender=request.json['mailid']
+            password=request.json["password"]
+            pred_val = pred_validation(path,sender,password) #object initialization
 
-                pandasFileAfterTraining=pred_val.prediction_validation() #calling the prediction_validation function'''
-                ''' onlyfiles = [f for f in listdir("C:\\Users\\Acer\\Downloads\\Good_Raw2")]
-                d = []
-                for f in onlyfiles:
-                    d.append(pd.read_csv("C:\\Users\\Acer\\Downloads\\Good_Raw2\\" + f))
-                pandasFileAfterTraining = pd.concat(d, ignore_index=True)'''
+            pandasFileAfterTraining=pred_val.prediction_validation() #calling the prediction_validation function'''
+            '''onlyfiles = [f for f in listdir("C:\\Users\\Acer\\Downloads\\Good_Raw2")]
+            d = []
+            for f in onlyfiles:
+                d.append(pd.read_csv("C:\\Users\\Acer\\Downloads\\Good_Raw2\\" + f))
+            pandasFileAfterTraining = pd.concat(d, ignore_index=True)'''
 
-                pred = prediction() #object initialization
-                # predicting for dataset present in database
-                path,json_predictions = pred.predictionFromModel(pandasFileAfterTraining)
-                return Response("Prediction File created at !!!"  +str(path) +'and few of the predictions are '+str(json.loads(json_predictions)))
-            elif request.form is not None:
-                path = request.form['filepath']
-
-                pred_val = pred_validation(path) #object initialization
-
-                pandasFileAfterTraining=pred_val.prediction_validation() #calling the prediction_validation function
-
-                pred = prediction(path) #object initialization
-
-                # predicting for dataset present in database
-                path,json_predictions = pred.predictionFromModel()
-                return Response("Prediction File created at !!!"  +str(path) +'and few of the predictions are '+str(json.loads(json_predictions) ))
-            else:
-                print('Nothing Matched')
+            pred = prediction() #object initialization
+            # predicting for dataset present in database
+            path,json_predictions = pred.predictionFromModel(pandasFileAfterTraining)
+            return Response("Prediction File created at !!!"  +str(path) +'and few of the predictions are '+str(json.loads(json_predictions)))
+        else:
+            print('Nothing Matched')
     except ValueError:
         return Response("Error Occurred! %s" %ValueError)
     except KeyError:
@@ -75,7 +75,9 @@ def trainRouteClient():
     try:
         if request.json['folderPath'] is not None:
             path = request.json['folderPath'].lower()
-            train_valObj = train_validation(path) #object initialization
+            sender = request.json['mailid']
+            password = request.json["password"]
+            train_valObj = train_validation(path,sender,password) #object initialization
 
             pandasFileAfterTraining=train_valObj.train_validation()#calling the training_validation function
             '''onlyfiles = [f for f in listdir("C:\\Users\\Acer\\Downloads\\Good_Raw")]
@@ -100,10 +102,10 @@ def trainRouteClient():
         return Response("Error Occurred! %s" % e)
     return Response("Training successfull!!")
 
-#port = int(os.getenv("PORT",5000))
+port = int(os.getenv("PORT",8000))
 if __name__ == "__main__":
     host = '0.0.0.0'
-    port = 8000
+    #port = 8000
     httpd = simple_server.make_server(host, port, app)
     # print("Serving on %s %d" % (host, port))
     httpd.serve_forever()

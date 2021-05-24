@@ -1,14 +1,12 @@
-import sqlite3
 from datetime import datetime
-from os import listdir
 import os
 import re
-import json
-import shutil
 import pymongo
 import pandas as pd
 import boto3
 from application_logging.logger import App_Logger
+from mail import EmailClass
+
 
 
 
@@ -25,7 +23,7 @@ class Raw_Data_validation:
 
              """
 
-    def __init__(self,path):
+    def __init__(self,path,sender,password):
         self.Batch_Directory = path
         self.client = pymongo.MongoClient("mongodb+srv://user:acer@validation-schema.v5gw1.mongodb.net/WAFERFAULT-DETECTION?retryWrites=true&w=majority")
         self.database = self.client["WAFERFAULT-DETECTION"]
@@ -36,6 +34,9 @@ class Raw_Data_validation:
         self.logger = App_Logger()
         self.s3client = boto3.client('s3')
         self.s3 = boto3.resource('s3')
+        self.sender = sender
+        self.password = password
+        self.mail = EmailClass()
 
     def valuesFromSchema(self):
         """
@@ -294,6 +295,7 @@ class Raw_Data_validation:
                 D = []
                 for i in km:
                     D.append(i.key)
+                self.mail.email(D, self.sender, self.password)
                 for i in D:
                     copy_source = {
                         'Bucket': 'training-batch-file',

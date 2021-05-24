@@ -5,8 +5,8 @@ from DataTransformation_Prediction.DataTransformationPrediction import dataTrans
 from application_logging import logger
 
 class pred_validation:
-    def __init__(self,path):
-        self.raw_data = Prediction_Data_validation(path)
+    def __init__(self,path,mailid,password):
+        self.raw_data = Prediction_Data_validation(path,mailid,password)
         self.dataTransform = dataTransformPredict()
         self.dBOperation = dBOperation()
         #self.file_object = open("Prediction_Logs/Prediction_Log.txt", 'a+')

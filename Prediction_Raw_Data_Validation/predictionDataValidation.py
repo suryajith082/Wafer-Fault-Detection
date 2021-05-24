@@ -5,7 +5,7 @@ import pandas as pd
 from application_logging.logger import App_Logger
 import pymongo
 import boto3
-
+from mail import EmailClass
 
 
 
@@ -14,13 +14,13 @@ class Prediction_Data_validation:
     """
                This class shall be used for handling all the validation done on the Raw Prediction Data!!.
 
-               Written By: iNeuron Intelligence
+               Written By: Suryajith Nair
                Version: 1.0
                Revisions: None
 
                """
 
-    def __init__(self,path):
+    def __init__(self,path,sender,password):
         self.Batch_Directory = path
         self.client = pymongo.MongoClient("mongodb+srv://user:acer@validation-schema.v5gw1.mongodb.net/WAFERFAULT-DETECTION?retryWrites=true&w=majority")
         #self.schema_path = 'schema_prediction.json'
@@ -31,6 +31,9 @@ class Prediction_Data_validation:
         self.s3client = boto3.client('s3')
         self.s3 = boto3.resource('s3')
         self.logger = App_Logger()
+        self.sender=sender
+        self.password=password
+        self.mail = EmailClass()
 
 
     def valuesFromSchema(self):
@@ -40,7 +43,7 @@ class Prediction_Data_validation:
                                 Output: LengthOfDateStampInFile, LengthOfTimeStampInFile, column_names, Number of Columns
                                 On Failure: Raise ValueError,KeyError,Exception
 
-                                 Written By: iNeuron Intelligence
+                                 Written By: Suryajith Nair
                                 Version: 1.0
                                 Revisions: None
 
@@ -95,7 +98,7 @@ class Prediction_Data_validation:
                                       Output: Regex pattern
                                       On Failure: None
 
-                                       Written By: iNeuron Intelligence
+                                       Written By: Suryajith Nair
                                       Version: 1.0
                                       Revisions: None
 
@@ -113,7 +116,7 @@ class Prediction_Data_validation:
                                         Output: None
                                         On Failure: OSError
 
-                                         Written By: iNeuron Intelligence
+                                         Written By: Suryajith Nair
                                         Version: 1.0
                                         Revisions: None
 
@@ -145,7 +148,7 @@ class Prediction_Data_validation:
                                             Output: None
                                             On Failure: OSError
 
-                                             Written By: iNeuron Intelligence
+                                             Written By: Suryajith Nair
                                             Version: 1.0
                                             Revisions: None
 
@@ -174,7 +177,7 @@ class Prediction_Data_validation:
                                             Output: None
                                             On Failure: OSError
 
-                                             Written By: iNeuron Intelligence
+                                             Written By: Suryajith Nair
                                             Version: 1.0
                                             Revisions: None
 
@@ -209,7 +212,7 @@ class Prediction_Data_validation:
                                             Output: None
                                             On Failure: OSError
 
-                                             Written By: iNeuron Intelligence
+                                             Written By: Suryajith Nair
                                             Version: 1.0
                                             Revisions: None
 
@@ -231,6 +234,8 @@ class Prediction_Data_validation:
                 D = []
                 for i in km:
                     D.append(i.key)
+
+                self.mail.email(D,self.sender,self.password)
                 for i in D:
                     copy_source = {
                         'Bucket': 'prediction-batch-file',
@@ -261,7 +266,7 @@ class Prediction_Data_validation:
             Output: None
             On Failure: Exception
 
-             Written By: iNeuron Intelligence
+             Written By: Suryajith Nair
             Version: 1.0
             Revisions: None
 
@@ -349,7 +354,7 @@ class Prediction_Data_validation:
                     Output: None
                     On Failure: Exception
 
-                     Written By: iNeuron Intelligence
+                     Written By: Suryajith Nair
                     Version: 1.0
                     Revisions: None
 
@@ -406,7 +411,7 @@ class Prediction_Data_validation:
                                   Output: None
                                   On Failure: Exception
 
-                                   Written By: iNeuron Intelligence
+                                   Written By: Suryajith Nair
                                   Version: 1.0
                                   Revisions: None
 

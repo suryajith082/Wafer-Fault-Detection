@@ -6,6 +6,8 @@ import pandas
 from application_logging import logger
 import os
 from Prediction_Raw_Data_Validation.predictionDataValidation import Prediction_Data_validation
+import boto3
+from datetime import datetime
 
 
 class prediction:
@@ -15,6 +17,8 @@ class prediction:
         self.database="WAFERFAULT-PREDICTION-LOGS"
         self.name="Prediction_from_Model_Log"
         self.log_writer = logger.App_Logger()
+        self.s3client = boto3.client('s3')
+        self.s3 = boto3.resource('s3')
 
     def predictionFromModel(self,dataframe):
 
@@ -50,14 +54,18 @@ class prediction:
                 model = file_loader.load_model(model_name)
                 result=list(model.predict(cluster_data))
                 listofoutput=list(zip(wafer_names,result))
+            now = datetime.now()
+            date = now.date()
+            time = now.strftime("%H%M%S")
             result = pandas.DataFrame(listofoutput,columns=['Wafer','Prediction'])
 
             result = result.sort_values(by='Wafer', ascending=True)
-            result.to_csv("Predictions.csv",header=True,mode='a+',index=False)#appends result to prediction file
-            #self.s3.Bucket('final-prediction-output').upload_file(Filename="Predictions.csv", Key="Predictions.csv")
-            #if os.path.exists("Predictions.csv"):
-            #    os.remove("Predictions.csv")
-            path = "prediction_output_file"
+            filename="Prediction"+str(date)+"_"+str(time)+".csv"
+            result.to_csv(filename,header=True,mode='a+',index=False)#appends result to prediction file
+            self.s3.Bucket('final-prediction-output').upload_file(Filename=filename, Key=filename)
+            if os.path.exists(filename):
+                os.remove(filename)
+            path = "final-prediction-output/"+filename
             self.log_writer.log(self.database,self.name,'End of Prediction')
         except Exception as ex:
             self.log_writer.log(self.database,self.name, 'Error occured while running the prediction!! Error:: %s' % ex)

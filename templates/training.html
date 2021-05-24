@@ -1,7 +1,7 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
-    <title>Prediction Page</title>
+    <title>Training Page</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
@@ -58,7 +58,7 @@
 			}
 		}
 		.res-container{}
-		.result-box{width:80%;margin-left:auto;margin-right:auto;height: 260px;padding:10px;overflow-y: auto;background: rgba(255, 255, 255, 0.5)}
+		.result-box{width:80%;margin-left:auto;margin-right:auto;height: 200px;padding:10px;overflow-y: auto;background: rgba(255, 255, 255, 0.5)}
 		#loading {
 			position: fixed;
 			left: 0px;
@@ -106,11 +106,11 @@
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="/">Prediction Page</a>
+      <a class="navbar-brand" href="/">Training Page</a>
     </div>
     <ul class="nav navbar-nav  navbar-right">
-      <li class="active"><a href="#">Home</a></li>
-      <li><a href="/traininpage">Training</a></li>
+      <li ><a href="/">Home</a></li>
+      <li class="active"><a href="/traininpage">Training</a></li>
       <li><a href="/contactpage">Contact</a></li>
     </ul>
   </div>
@@ -124,20 +124,21 @@
 			<div class="col-md-6 col-xs-12" style="height: 470px;float: left;padding-top: 100px;"><h1 class="my-4 title" >Wafer</h1>
 				<h1 class="my-4 title" >Fault </h1>
 				<h1 class="my-4 title" >Detection</h1>
+                <h1 class="my-4 title" >Training</h1>
 
 			</div>
 
 			<br>
 			<div class="col-md-6 col-xs-12"style="height: 470px;float: right;padding-top: 50px;background-color: rgba(0, 0, 0, 0.9)">
 					<h4 style="color:#FFFFFF">About This</h4>
-					<p style="color:#FFFFFF">This is a ML based solution for detecting faulty wafer from production pipeline.</p>
-					<p style="color:#FFFFFF">This page is for prediction, to train select training from navigation bar</p>
+					<p style="color:#FFFFFF">While training data should be stored on AWS S3 Bucket</p>
+					<p style="color:#FFFFFF">Bucket name should be mentioned on input. To predict select Home from navigation bar.</p>
 					<p style="color:#FFFFFF">Project is not for public. It uses AWS S3 Bucket service for getting files and storing prediction output</p>
 					<p style="color:#FFFFFF">Program logs are stored on MongoDB Atlas</p>
 					<p style="color:#FFFFFF">On the basis of DSA agreement, file naming conventions and their properties are stored on MongoDB </p>
-					<p style="color:#FFFFFF">While prediction it will check all those naming conventions and properties of all files, on the basis of that bad files will be classified and names of that file are mailed to client. </p>
-					<p style="color:#FFFFFF">Files are or should be stored on AWS S3 Bucket, mention bucket name on text input and it will start processing files one by one from bucket.</p>
-					<p style="color:#FFFFFF">Result will be stored back on S3 bucket and some result are showcased on result  </p>
+					<p style="color:#FFFFFF">While training it will check all those naming conventions and properties of all files, on the basis of that bad files will be classified and names of that file are mailed to client. </p>
+					<p style="color:#FFFFFF">The best suitable ML model is selected or binary file generation is done by its own. No middle person is needed</p>
+					<p style="color:#FFFFFF">Preprocessing data transformation and model saving all those kind of steps are done itself.</p>
 					<p style="color:#FFFFFF">To show demo please contact me  </p>
 
 			</div>
@@ -147,7 +148,7 @@
 					<br/>
 					<form method="post" id="datafetch_form" enctype="multipart/form-data">
 						<div class="form-group files color">
-							<input type="text" name = "csvfile" id="csvfile" class="form-control" placeholder="Enter absolute file path." required>
+							<input type="text" name = "csvfile" id="csvfile" class="form-control" placeholder="Enter s3 bucket name for training." required>
 						</div>
 						<div class="form-group files color">
 							<input type="text" name = "maildid" id="maildid" class="form-control" placeholder="Enter mail id." required>
@@ -155,8 +156,8 @@
 						<div class="form-group files color">
 							<input type="password" name = "pass" id="pass" class="form-control" placeholder="Enter password." required>
 						</div>
-						<div class=""><button class="form-control btn-primary" id="customfile">Custom File Predict</button></div>
-						<br/><center><b>Or</b></center><br/>
+						<div class=""><button class="form-control btn-primary" id="customfile">Custom File Train</button></div>
+
 					</form>
 				</div>
 				<div class="res-container  col-md-6 col-xs-12">
@@ -171,8 +172,8 @@
 		</div>
 	</section>
 
-	
-	
+
+
 	<div id="loading"><div class="loader"></div></div>
 	<!-- Bootstrap core JavaScript -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -186,18 +187,18 @@
 				$('#loading').show();
 				var path = $("#csvfile").val();
 				var object = {
-            		filepath: $("#csvfile").val(),
+            		folderPath: $("#csvfile").val(),
             		mailid:$("#maildid").val(),
             		password:$("#pass").val()
         		}
 				$.ajax({
 					//change url below
-					url : "/predict",
+					url : "/train",
 					type: "POST",
 					data: JSON.stringify(object),
 					contentType: "application/json",
 					success: function(response){
-						$(".json-result").html('<p>"Prediction File created at !!!Prediction_Output_File/Predictions.csv and few of the predictions are"</p><pre>' + response + '</pre>');
+						$(".json-result").html('<p>Successfully trained</p>');
 						$('#loading').hide();
 					}
 				});
